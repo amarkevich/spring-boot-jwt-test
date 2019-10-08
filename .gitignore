@@ -33,3 +33,5 @@ target
 # IDEA
 *.iml
 .idea
+
+.pmd*

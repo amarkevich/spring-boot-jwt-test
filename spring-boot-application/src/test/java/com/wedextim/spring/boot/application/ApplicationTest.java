@@ -38,6 +38,7 @@ import com.wedextim.spring.boot.test.jwt.JwtTestSupport;
     classes = Application.class,
     webEnvironment = WebEnvironment.RANDOM_PORT,
     properties = {
+        "debug=true",
         "spring.security.oauth2.resourceserver.jwt.jwk-set-uri=http://localhost:${server.port}/jwks.json"
     }
 )
