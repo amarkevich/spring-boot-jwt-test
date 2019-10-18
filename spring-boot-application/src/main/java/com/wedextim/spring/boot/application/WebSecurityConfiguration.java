@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 
 @EnableWebSecurity
+// 'proxyTargetClass = true' required to avoid https://github.com/spring-projects/spring-boot/issues/18523
 @EnableGlobalMethodSecurity(prePostEnabled = true, proxyTargetClass = true)
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
