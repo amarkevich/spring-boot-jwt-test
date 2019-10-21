@@ -66,7 +66,7 @@ public class JwtTestSupport {
 
     private static void generateKeys() throws Exception {
         KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
-        gen.initialize(1024, new SecureRandom());
+        gen.initialize(2048, new SecureRandom());
         KeyPair keyPair = gen.generateKeyPair();
         RSAKey jwk = new RSAKey.Builder((RSAPublicKey) keyPair.getPublic()).build();
         Files.write(Paths.get("src/main/resources/jwks.json"), ("{\"keys\": [" + jwk.toJSONString() + "]}").getBytes());

@@ -20,7 +20,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web) {
         web.ignoring()
             .antMatchers("/*.json", "/actuator/**");
     }
