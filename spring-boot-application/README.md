@@ -1,0 +1,1 @@
+java -Dregion=region -DcognitoPoolId=cognitoPoolId -jar spring-boot-application-0.0.1-SNAPSHOT.jar
