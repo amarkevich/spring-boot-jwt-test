@@ -35,6 +35,8 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
 import java.util.UUID;
 
+import static com.nimbusds.jose.jwk.gen.RSAKeyGenerator.MIN_KEY_SIZE_BITS;
+
 public class JwtTestSupport {
 
     private static PrivateKey privateKey;
@@ -66,7 +68,7 @@ public class JwtTestSupport {
 
     private static void generateKeys() throws Exception {
         KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
-        gen.initialize(2048, new SecureRandom());
+        gen.initialize(MIN_KEY_SIZE_BITS, new SecureRandom());
         KeyPair keyPair = gen.generateKeyPair();
         RSAKey jwk = new RSAKey.Builder((RSAPublicKey) keyPair.getPublic()).build();
         Files.write(Paths.get("src/main/resources/jwks.json"), ("{\"keys\": [" + jwk.toJSONString() + "]}").getBytes());
