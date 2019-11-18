@@ -12,7 +12,7 @@
 
         <spring-boot.version>2.2.1.RELEASE</spring-boot.version>
         <spring-boot-jwt-test.version>0.1.0</spring-boot-jwt-test.version>
-        <swagger.version>2.0.10</swagger.version>
+        <swagger.version>2.1.0</swagger.version>
     </properties>
 
     <dependencies>
