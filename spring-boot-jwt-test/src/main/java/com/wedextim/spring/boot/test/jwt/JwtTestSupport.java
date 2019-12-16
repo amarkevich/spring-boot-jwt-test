@@ -43,6 +43,7 @@ public class JwtTestSupport {
 
     public static String createToken(UUID userId, String... roles) throws Exception {
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+            .issuer("http://localhost")
             .subject(userId.toString())
             .claim("cognito:groups", roles)
 //            .claim("scope", "aws.cognito.signin.user.admin")
