@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -12,7 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 @EnableWebSecurity
 // 'proxyTargetClass = true' required to avoid https://github.com/spring-projects/spring-boot/issues/18523
@@ -38,10 +39,13 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .jwtAuthenticationConverter(new CognitoGroupAuthoritiesExtractor());
     }
 
-    static class CognitoGroupAuthoritiesExtractor extends JwtAuthenticationConverter {
+    static class CognitoGroupAuthoritiesExtractor implements Converter<Jwt, JwtAuthenticationToken> {
 
-        @Override
-        protected Collection<GrantedAuthority> extractAuthorities(Jwt jwt) {
+        public JwtAuthenticationToken convert(Jwt jwt) {
+            return new JwtAuthenticationToken(jwt, extractAuthorities(jwt));
+        }
+
+        private Collection<GrantedAuthority> extractAuthorities(Jwt jwt) {
             final Collection<String> authorities = jwt.getClaimAsStringList("cognito:groups");
             if (authorities == null) {
                 return Collections.emptyList();
