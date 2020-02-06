@@ -18,15 +18,17 @@
  */
 package com.wedextim.spring.boot.test.jwt;
 
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
-import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.*;
@@ -41,15 +43,25 @@ public class JwtTestSupport {
 
     private static PrivateKey privateKey;
 
-    public static String createToken(UUID userId, String... roles) throws Exception {
-        JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+    public static String createToken(UUID userId, String... roles)
+        throws IOException, GeneralSecurityException, JOSEException {
+        final JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
             .issuer("http://localhost")
             .subject(userId.toString())
             .claim("cognito:groups", roles)
 //            .claim("scope", "aws.cognito.signin.user.admin")
             .build();
 
-        SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claimsSet);
+        final SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claimsSet);
+        signedJWT.sign(new RSASSASigner(privateKey()));
+        return signedJWT.serialize();
+    }
+
+    public static String bearerToken(final UUID userId, String... roles) throws Exception {
+        return "Bearer " + JwtTestSupport.createToken(userId, roles);
+    }
+
+    private static PrivateKey privateKey() throws IOException, GeneralSecurityException {
         if (null == privateKey) {
             try (InputStream is = JwtTestSupport.class.getResourceAsStream("/private.key")) {
                 byte[] b = new byte[is.available()];
@@ -58,13 +70,7 @@ public class JwtTestSupport {
                     .generatePrivate(new PKCS8EncodedKeySpec(Base64.getDecoder().decode(b)));
             }
         }
-        JWSSigner signer = new RSASSASigner(privateKey);
-        signedJWT.sign(signer);
-        return signedJWT.serialize();
-    }
-
-    public static String bearerToken(final UUID userId, String... roles) throws Exception {
-        return "Bearer " + JwtTestSupport.createToken(userId, roles);
+        return privateKey;
     }
 
     private static void generateKeys() throws Exception {
@@ -72,7 +78,8 @@ public class JwtTestSupport {
         gen.initialize(MIN_KEY_SIZE_BITS, new SecureRandom());
         KeyPair keyPair = gen.generateKeyPair();
         RSAKey jwk = new RSAKey.Builder((RSAPublicKey) keyPair.getPublic()).build();
-        Files.write(Paths.get("src/main/resources/jwks.json"), ("{\"keys\": [" + jwk.toJSONString() + "]}").getBytes());
+        Files.write(Paths.get("src/main/resources/jwks.json"),
+            ("{\"keys\": [" + jwk.toJSONString() + "]}").getBytes(StandardCharsets.UTF_8));
         Files.write(Paths.get("src/main/resources/private.key"),
             Base64.getEncoder().encode(new PKCS8EncodedKeySpec(keyPair.getPrivate().getEncoded()).getEncoded()));
     }
