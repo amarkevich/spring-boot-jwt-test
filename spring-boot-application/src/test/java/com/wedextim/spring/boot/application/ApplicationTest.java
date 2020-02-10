@@ -56,6 +56,7 @@ public class ApplicationTest {
         assertThrows(NotAuthorizedException.class,
             () -> controller(null).getPlain());
 
+        assertNotNull(controller(USER_ID, (UserRole[]) null).getPlain());
         assertNotNull(controller(USER_ID).getPlain());
     }
 
@@ -116,7 +117,7 @@ public class ApplicationTest {
     private static void applyRoles(Object client, UUID userId, UserRole...roles) throws Exception {
         if (userId != null) {
             WebClient.client(client).authorization(JwtTestSupport.bearerToken(userId,
-                Arrays.stream(roles).map(UserRole::name).toArray(String[]::new)));
+                null != roles ? Arrays.stream(roles).map(UserRole::name).toArray(String[]::new) : null));
         }
     }
 }

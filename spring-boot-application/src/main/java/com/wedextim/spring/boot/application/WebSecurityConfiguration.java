@@ -1,19 +1,18 @@
 package com.wedextim.spring.boot.application;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.stream.Collectors;
 
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 
 @EnableWebSecurity
 // 'proxyTargetClass = true' required to avoid https://github.com/spring-projects/spring-boot/issues/18523
@@ -36,23 +35,19 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
             .oauth2ResourceServer()
                 .jwt()
-                .jwtAuthenticationConverter(new CognitoGroupAuthoritiesExtractor());
+                .jwtAuthenticationConverter(grantedAuthoritiesExtractor());
     }
 
-    static class CognitoGroupAuthoritiesExtractor implements Converter<Jwt, JwtAuthenticationToken> {
-
-        public JwtAuthenticationToken convert(Jwt jwt) {
-            return new JwtAuthenticationToken(jwt, extractAuthorities(jwt));
-        }
-
-        private Collection<GrantedAuthority> extractAuthorities(Jwt jwt) {
+    Converter<Jwt, AbstractAuthenticationToken> grantedAuthoritiesExtractor() {
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwt -> {
             final Collection<String> authorities = jwt.getClaimAsStringList("cognito:groups");
             if (authorities == null) {
-                return Collections.emptyList();
+                return null;
             }
             return authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
-        }
-
+        });
+        return jwtAuthenticationConverter;
     }
 
 }
