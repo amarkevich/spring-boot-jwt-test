@@ -45,7 +45,8 @@ import com.wedextim.spring.boot.test.jwt.JwtTestSupport;
     properties = {
         "debug=true",
         "spring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost",
-        "spring.security.oauth2.resourceserver.jwt.jwk-set-uri=http://localhost:${server.port}/jwks.json"
+        "spring.security.oauth2.resourceserver.jwt.jwk-set-uri=http://localhost:${server.port}/jwks.json",
+        "server.error.include-message=always"
     }
 )
 @ContextConfiguration(initializers = ServerPortInitializer.class)
