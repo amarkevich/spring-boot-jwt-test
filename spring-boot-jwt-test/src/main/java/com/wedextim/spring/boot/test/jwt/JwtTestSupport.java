@@ -18,26 +18,26 @@
  */
 package com.wedextim.spring.boot.test.jwt;
 
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSHeader;
-import com.nimbusds.jose.crypto.RSASSASigner;
-import com.nimbusds.jose.jwk.RSAKey;
-import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.SignedJWT;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.*;
-import java.security.interfaces.RSAPublicKey;
+import java.security.GeneralSecurityException;
+import java.security.KeyFactory;
+import java.security.PrivateKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
 import java.util.UUID;
 
-import static com.nimbusds.jose.jwk.gen.RSAKeyGenerator.MIN_KEY_SIZE_BITS;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.crypto.RSASSASigner;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.gen.RSAKeyGenerator;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 
 public class JwtTestSupport {
 
@@ -73,18 +73,16 @@ public class JwtTestSupport {
         return privateKey;
     }
 
-    private static void generateKeys() throws Exception {
-        KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
-        gen.initialize(MIN_KEY_SIZE_BITS, new SecureRandom());
-        KeyPair keyPair = gen.generateKeyPair();
-        RSAKey jwk = new RSAKey.Builder((RSAPublicKey) keyPair.getPublic()).build();
+    private static void generateKeys() throws JOSEException, IOException {
+        RSAKey jwk = new RSAKeyGenerator(RSAKeyGenerator.MIN_KEY_SIZE_BITS).generate();
         Files.write(Paths.get("src/main/resources/jwks.json"),
-            ("{\"keys\": [" + jwk.toJSONString() + "]}").getBytes(StandardCharsets.UTF_8));
+            ("{\"keys\": [" + jwk.toPublicJWK().toJSONString() + "]}").getBytes(StandardCharsets.UTF_8));
         Files.write(Paths.get("src/main/resources/private.key"),
-            Base64.getEncoder().encode(new PKCS8EncodedKeySpec(keyPair.getPrivate().getEncoded()).getEncoded()));
+            Base64.getEncoder().encode(new PKCS8EncodedKeySpec(jwk.toPrivateKey().getEncoded()).getEncoded()));
     }
 
     public static void main(String[] args) throws Exception {
         JwtTestSupport.generateKeys();
     }
+
 }
