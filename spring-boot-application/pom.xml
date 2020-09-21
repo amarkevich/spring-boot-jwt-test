@@ -100,6 +100,14 @@
                         </goals>
                         <configuration>
                             <includeScope>runtime</includeScope>
+                            <excludeArtifactIds>
+                                spring-boot-starter,
+                                spring-boot-starter-json,
+                                spring-boot-starter-logging,
+                                spring-boot-starter-oauth2-resource-server,
+                                spring-boot-starter-tomcat,
+                                spring-boot-starter-web
+                            </excludeArtifactIds>
                         </configuration>
                     </execution>
                 </executions>
