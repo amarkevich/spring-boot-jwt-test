@@ -41,7 +41,7 @@ public interface ControllerFailure {
     @Operation(
         summary = "Get",
         responses = {
-            @ApiResponse(responseCode = "200", description = "failure"),
+            @ApiResponse(responseCode = "422", description = "failure"),
         },
         security = @SecurityRequirement(name = "cognito-authorizer")
     )
