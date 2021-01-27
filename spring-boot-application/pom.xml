@@ -11,30 +11,12 @@
         <java.version>1.8</java.version>
 
         <spring-boot.version>2.4.2</spring-boot.version>
-        <spring-boot-jwt-test.version>0.1.1</spring-boot-jwt-test.version>
-        <swagger.version>2.1.6</swagger.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-jaxrs2</artifactId>
-            <version>${swagger.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.ws.rs</groupId>
-            <artifactId>jakarta.ws.rs-api</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -47,12 +29,6 @@
                     <artifactId>junit-vintage-engine</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.wedextim</groupId>
-            <artifactId>spring-boot-jwt-test</artifactId>
-            <version>${spring-boot-jwt-test.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.cxf</groupId>
@@ -125,23 +101,6 @@
                         </manifest>
                     </archive>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>io.swagger.core.v3</groupId>
-                <artifactId>swagger-maven-plugin</artifactId>
-                <version>${swagger.version}</version>
-                <configuration>
-                    <outputPath>${project.build.outputDirectory}</outputPath>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>openapi</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>resolve</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
         <pluginManagement>
