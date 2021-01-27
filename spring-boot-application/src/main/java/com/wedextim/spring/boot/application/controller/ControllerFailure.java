@@ -7,7 +7,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,7 +18,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.servers.Server;
 
-@RequestMapping("/failure")
 @OpenAPIDefinition(
     info = @Info(title = "ControllerFailure", version = "1"),
     servers = @Server(url = "/controller")
@@ -35,7 +33,7 @@ public interface ControllerFailure {
 
     String FAILURE_MESSSAGE = "failure message";
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON)
+    @GetMapping(path = "/failure", produces = MediaType.APPLICATION_JSON)
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(

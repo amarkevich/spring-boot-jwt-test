@@ -7,7 +7,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,7 +18,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.servers.Server;
 
-@RequestMapping("/v2")
 @OpenAPIDefinition(
     info = @Info(title = "PreAuthorize Controller", version = "2"),
     servers = @Server(url = "/controller")
@@ -33,7 +31,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
 @Path("/v2")
 public interface ControllerPreAuthorize {
 
-    @GetMapping(produces = MediaType.TEXT_PLAIN)
+    @GetMapping(path = "/v2", produces = MediaType.TEXT_PLAIN)
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     @Operation(
@@ -45,7 +43,7 @@ public interface ControllerPreAuthorize {
     )
     String getPlain();
 
-    @GetMapping
+    @GetMapping(path = "/v2")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(
